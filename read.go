@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
+	"log"
 	"strings"
 )
 
@@ -59,6 +60,10 @@ func (wac *Conn) processReadData(msgType int, msg []byte) error {
 
 	if len(data) != 2 || len(data[1]) == 0 {
 		return ErrInvalidWsData
+	}
+
+	if wac.debugMode && msgType == websocket.TextMessage {
+		log.Printf("Socket.RecvTextMessage: %s", msg)
 	}
 
 	wac.listener.RLock()

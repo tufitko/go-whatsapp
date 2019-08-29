@@ -91,6 +91,8 @@ type Conn struct {
 	shortClientName string
 
 	loginSessionLock sync.RWMutex
+
+	debugMode bool
 }
 
 type websocketWrapper struct {
@@ -119,6 +121,14 @@ func NewConn(timeout time.Duration) (*Conn, error) {
 		shortClientName: "go-whatsapp",
 	}
 	return wac, wac.connect()
+}
+
+func NewDebugConn(timeout time.Duration) (*Conn, error) {
+	conn, err := NewConn(timeout)
+	if conn != nil {
+		conn.debugMode = true
+	}
+	return conn, err
 }
 
 // connect should be guarded with wsWriteMutex
@@ -202,7 +212,7 @@ func (wac *Conn) AdminTest() (bool, error) {
 		return false, ErrInvalidSession
 	}
 
-	result, err := wac.sendAdminTest()			
+	result, err := wac.sendAdminTest()
 	return result, err
 }
 
